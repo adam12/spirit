@@ -67,13 +67,25 @@ func main() {
 		}
 
 	case "log":
-		if flag.Arg(1) == "" {
+		name := flag.Arg(1)
+		if name == "" {
 			quit(usage, 1)
 		}
 
+		if err := lookupProcess(name).viewLog(); err != nil {
+			fmt.Print(err)
+			os.Exit(1)
+		}
+
 	case "tail":
-		if flag.Arg(1) == "" {
+		name := flag.Arg(1)
+		if name == "" {
 			quit(usage, 1)
+		}
+
+		if err := lookupProcess(name).tailLog(); err != nil {
+			fmt.Print(err)
+			os.Exit(1)
 		}
 
 	case "run":
