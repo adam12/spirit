@@ -144,6 +144,7 @@ func (p *Process) getPid() (int, error) {
 
 func (p *Process) viewLog() error {
 	cmd := exec.Command("less", p.logFile)
+	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
@@ -152,6 +153,7 @@ func (p *Process) viewLog() error {
 
 func (p *Process) tailLog() error {
 	cmd := exec.Command("tail", "-f", p.logFile)
+	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
