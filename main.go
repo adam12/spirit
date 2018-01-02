@@ -164,7 +164,7 @@ func lookupProcess(name string) *Process {
 		return p
 	}
 
-	quit("Unable to find process " + name, 1)
+	quit("Unable to find process "+name, 1)
 
 	// Never reached. Appease the compiler.
 	return nil
