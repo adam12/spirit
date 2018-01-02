@@ -96,7 +96,11 @@ func main() {
 		cmd := exec.Command(flag.Arg(1), flag.Args()[2:]...)
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
-		cmd.Run()
+
+		if err := cmd.Run(); err != nil {
+			fmt.Print(err)
+			os.Exit(1)
+		}
 
 	case "status":
 		for name, p := range processes {
