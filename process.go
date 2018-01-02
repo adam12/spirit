@@ -61,7 +61,7 @@ func (p *Process) stop() error {
 		return err
 	}
 
-	if err = proc.Signal(syscall.Signal(15)); err != nil {
+	if err = proc.Signal(syscall.SIGTERM); err != nil {
 		return err
 	}
 
