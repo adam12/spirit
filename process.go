@@ -108,11 +108,7 @@ func (p *Process) isRunning() bool {
 		panic(err)
 	}
 
-	if err = proc.Signal(syscall.Signal(0)); err != nil {
-		return false
-	}
-
-	return true
+	return proc.Signal(syscall.Signal(0)) == nil
 }
 
 func (p *Process) getDaemonPid() (int, error) {
@@ -143,12 +139,7 @@ func (p *Process) getPid() (int, error) {
 		return 0, err
 	}
 
-	pid, err := strconv.Atoi(string(data))
-	if err != nil {
-		return 0, err
-	}
-
-	return pid, nil
+	return strconv.Atoi(string(data))
 }
 
 func (p *Process) viewLog() error {
