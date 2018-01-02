@@ -38,7 +38,7 @@ func (p *Process) start() error {
 
 	path, err := exec.LookPath("daemon")
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	cmd := exec.Command(path, args...)
