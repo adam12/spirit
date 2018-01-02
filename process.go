@@ -166,10 +166,12 @@ func NewProcess(name, command string, arguments []string) *Process {
 		panic(err)
 	}
 
-	pidFile := filepath.Join(cwd, "tmp", "pids", name+".pid")
-	daemonPidFile := filepath.Join(cwd, "tmp", "pids", name+".daemon.pid")
-	logFile := filepath.Join(cwd, "tmp", "logs", name+".log")
-
-	return &Process{name: name, command: command, arguments: arguments, pidFile: pidFile,
-		daemonPidFile: daemonPidFile, logFile: logFile}
+	return &Process{
+		name:          name,
+		command:       command,
+		arguments:     arguments,
+		pidFile:       filepath.Join(cwd, "tmp", "pids", name+".pid"),
+		daemonPidFile: filepath.Join(cwd, "tmp", "pids", name+".daemon.pid"),
+		logFile:       filepath.Join(cwd, "tmp", "logs", name+".log"),
+	}
 }
