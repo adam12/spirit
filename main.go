@@ -94,6 +94,7 @@ func main() {
 		}
 
 		cmd := exec.Command(flag.Arg(1), flag.Args()[2:]...)
+		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 
