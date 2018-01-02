@@ -93,7 +93,7 @@ func main() {
 			quit(usage, 1)
 		}
 
-		cmd := exec.Command(flag.Arg(1))
+		cmd := exec.Command(flag.Arg(1), flag.Args()[2:]...)
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 		cmd.Run()
