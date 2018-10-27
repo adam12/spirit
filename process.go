@@ -65,6 +65,10 @@ func (p *Process) stop() error {
 		return err
 	}
 
+	if _, err := proc.Wait(); err != nil {
+		return err
+	}
+
 	return nil
 }
 
