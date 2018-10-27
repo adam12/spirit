@@ -37,10 +37,14 @@ func main() {
 		name := flag.Arg(1)
 
 		if name != "" {
-			lookupProcess(name).start()
+			if err := lookupProcess(name).start(); err != nil {
+				panic(err)
+			}
 		} else {
 			for _, p := range processes {
-				p.start()
+				if err := p.start(); err != nil {
+					panic(err)
+				}
 			}
 		}
 
