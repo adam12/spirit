@@ -1,0 +1,4 @@
+github.com/chrismytton/procfile v0.0.2-0.20121001233524-6779278c39c3 h1:mnbJCJbdUlerOR4v2vXcYyy+EEMl+dJMfgwqaGaTaok=
+github.com/chrismytton/procfile v0.0.2-0.20121001233524-6779278c39c3/go.mod h1:+5iWbDr2uhzHCEYtLFNXUFF0vDuXSUJMc0SrAqFFFTc=
+github.com/direnv/go-dotenv v0.0.0-20180121165740-4738ec4932d7 h1:6mdAnBQ/l1OwCm0/xz+cIRvF81BbJB5TfdZbpYmqYAk=
+github.com/direnv/go-dotenv v0.0.0-20180121165740-4738ec4932d7/go.mod h1:T/OO6ZHPlA9WCvpwKhgyBiWiMcLwbP/rsGgxkxVHk6g=

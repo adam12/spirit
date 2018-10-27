@@ -6,7 +6,7 @@ import "os"
 import "os/exec"
 import "io/ioutil"
 import "github.com/direnv/go-dotenv"
-import "github.com/hecticjeff/procfile"
+import "github.com/chrismytton/procfile"
 
 const usage = `
 Usage: spirit COMMAND [opts]
