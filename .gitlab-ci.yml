@@ -14,6 +14,8 @@ before_script:
   - mkdir -p $GOPATH/src/$(dirname $REPO_NAME)
   - ln -svf $CI_PROJECT_DIR $GOPATH/src/$REPO_NAME
   - cd $GOPATH/src/$REPO_NAME
+  - go get github.com/direnv/go-dotenv
+  - go get github.com/hecticjeff/procfile
 
 stages:
     - test
