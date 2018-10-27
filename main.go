@@ -22,6 +22,8 @@ Commands:
 	status
 `
 
+const envFilename = "./.env"
+
 var processes = make(map[string]*Process)
 var env map[string]string
 
@@ -148,11 +150,11 @@ func parseProcfile() {
 func parseEnv() {
 	var err error
 
-	if _, err := os.Stat("./.env"); os.IsNotExist(err) {
+	if _, err := os.Stat(envFilename); os.IsNotExist(err) {
 		return
 	}
 
-	data, err := ioutil.ReadFile("./.env")
+	data, err := ioutil.ReadFile(envFilename)
 	if err != nil {
 		panic(err)
 	}
