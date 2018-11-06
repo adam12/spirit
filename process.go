@@ -1,6 +1,6 @@
 package main
 
-import "errors"
+import "fmt"
 import "os"
 import "os/exec"
 import "path/filepath"
@@ -75,7 +75,7 @@ func (p *Process) stop() error {
 		time.Sleep(5 * time.Second)
 	}
 
-	return errors.New("Process never exited")
+	return fmt.Errorf("Process with pid %d never exited", pid)
 }
 
 func (p *Process) restart() error {
