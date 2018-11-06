@@ -1,12 +1,14 @@
 package main
 
-import "fmt"
-import "flag"
-import "os"
-import "os/exec"
-import "io/ioutil"
-import "github.com/direnv/go-dotenv"
-import "github.com/chrismytton/procfile"
+import (
+	"flag"
+	"fmt"
+	"github.com/chrismytton/procfile"
+	"github.com/direnv/go-dotenv"
+	"io/ioutil"
+	"os"
+	"os/exec"
+)
 
 const usage = `
 Usage: spirit COMMAND [opts]
@@ -24,8 +26,10 @@ Commands:
 
 const envFilename = "./.env"
 
-var processes = make(map[string]*Process)
-var env map[string]string
+var (
+	processes = make(map[string]*Process)
+	env       map[string]string
+)
 
 func main() {
 	flag.Parse()

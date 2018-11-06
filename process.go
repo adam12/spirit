@@ -1,14 +1,16 @@
 package main
 
-import "fmt"
-import "os"
-import "os/exec"
-import "path/filepath"
-import "io/ioutil"
-import "strconv"
-import "syscall"
-import "strings"
-import "time"
+import (
+	"fmt"
+	"io/ioutil"
+	"os"
+	"os/exec"
+	"path/filepath"
+	"strconv"
+	"strings"
+	"syscall"
+	"time"
+)
 
 type Process struct {
 	name          string
