@@ -54,10 +54,14 @@ func main() {
 		name := flag.Arg(1)
 
 		if name != "" {
-			lookupProcess(name).stop()
+			if err := lookupProcess(name).stop(); err != nil {
+				panic(err)
+			}
 		} else {
 			for _, p := range processes {
-				p.stop()
+				if err := p.stop(); err != nil {
+					panic(err)
+				}
 			}
 		}
 
@@ -65,10 +69,14 @@ func main() {
 		name := flag.Arg(1)
 
 		if name != "" {
-			lookupProcess(name).restart()
+			if err := lookupProcess(name).restart(); err != nil {
+				panic(err)
+			}
 		} else {
 			for _, p := range processes {
-				p.restart()
+				if err := p.restart(); err != nil {
+					panic(err)
+				}
 			}
 		}
 
