@@ -31,6 +31,13 @@ var (
 	env       map[string]string
 )
 
+func init() {
+	flag.Usage = func() {
+		fmt.Print(usage)
+		flag.PrintDefaults()
+	}
+}
+
 func main() {
 	flag.Parse()
 
