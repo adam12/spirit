@@ -1,5 +1,6 @@
 package main
 
+import "errors"
 import "os"
 import "os/exec"
 import "path/filepath"
@@ -7,6 +8,7 @@ import "io/ioutil"
 import "strconv"
 import "syscall"
 import "strings"
+import "time"
 
 type Process struct {
 	name          string
@@ -65,11 +67,15 @@ func (p *Process) stop() error {
 		return err
 	}
 
-	if _, err := proc.Wait(); err != nil {
-		return err
+	for i := 1; i <= 12; i++ {
+		if err = proc.Signal(syscall.Signal(0)); err != nil {
+			return nil
+		}
+
+		time.Sleep(5 * time.Second)
 	}
 
-	return nil
+	return errors.New("Process never exited")
 }
 
 func (p *Process) restart() error {
