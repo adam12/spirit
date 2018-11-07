@@ -43,7 +43,10 @@ func main() {
 
 	parseProcfile()
 	parseEnv()
-	setEnv()
+
+	if err := setEnv(); err != nil {
+		panic(err)
+	}
 
 	switch flag.Arg(0) {
 	case "start":
@@ -145,7 +148,9 @@ func quit(message string, code int) {
 
 func setEnv() error {
 	for key, value := range env {
-		os.Setenv(key, value)
+		if err := os.Setenv(key, value); err != nil {
+			return err
+		}
 	}
 
 	return nil
