@@ -155,7 +155,13 @@ func (p *Process) getPid() (int, error) {
 }
 
 func (p *Process) viewLog() error {
-	cmd := exec.Command("less", p.logFile)
+	pager := os.Getenv("PAGER")
+
+	if pager == "" {
+		pager = "more"
+	}
+
+	cmd := exec.Command(pager, p.logFile)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
