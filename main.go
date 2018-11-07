@@ -24,8 +24,6 @@ Commands:
 	status
 `
 
-const envFilename = "./.env"
-
 var (
 	processes = make(map[string]*Process)
 	env       map[string]string
@@ -157,11 +155,11 @@ func setEnv() error {
 }
 
 func parseProcfile() {
-	if _, err := os.Stat("./Procfile"); os.IsNotExist(err) {
+	if _, err := os.Stat("Procfile"); os.IsNotExist(err) {
 		quit("Unable to find Procfile", 1)
 	}
 
-	data, err := ioutil.ReadFile("./Procfile")
+	data, err := ioutil.ReadFile("Procfile")
 	if err != nil {
 		panic(err)
 	}
@@ -174,11 +172,11 @@ func parseProcfile() {
 func parseEnv() {
 	var err error
 
-	if _, err := os.Stat(envFilename); os.IsNotExist(err) {
+	if _, err := os.Stat(".env"); os.IsNotExist(err) {
 		return
 	}
 
-	data, err := ioutil.ReadFile(envFilename)
+	data, err := ioutil.ReadFile(".env")
 	if err != nil {
 		panic(err)
 	}
