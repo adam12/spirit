@@ -42,7 +42,7 @@ func (p *Process) start() error {
 
 	path, err := exec.LookPath("daemon")
 	if err != nil {
-		return err
+		return fmt.Errorf("Unable to find daemon binary on PATH")
 	}
 
 	cmd := exec.Command(path, args...)
@@ -57,16 +57,16 @@ func (p *Process) stop() error {
 
 	pid, err := p.getDaemonPid()
 	if err != nil {
-		return err
+		return fmt.Errorf("Error getting daemon PID: %w", err)
 	}
 
 	proc, err := os.FindProcess(pid)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error finding process for PID %d: %w", pid, err)
 	}
 
 	if err = proc.Signal(syscall.SIGTERM); err != nil {
-		return err
+		return fmt.Errorf("Error sending SIGTERM: %w", err)
 	}
 
 	for i := 1; i <= 12; i++ {
@@ -82,11 +82,11 @@ func (p *Process) stop() error {
 
 func (p *Process) restart() error {
 	if err := p.stop(); err != nil {
-		return err
+		return fmt.Errorf("Error stopping process: %w", err)
 	}
 
 	if err := p.start(); err != nil {
-		return err
+		return fmt.Errorf("Error starting process: %w", err)
 	}
 
 	return nil
