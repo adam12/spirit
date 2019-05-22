@@ -1,0 +1,36 @@
+#!/bin/sh
+
+. /etc/rc.subr
+
+name="spirit"
+start_cmd="${name}_start"
+stop_cmd=":"
+
+load_rc_config $name
+: "${spirit_enable:=no}"
+: "${spirit_home:=/usr/home}"
+: "${spirit_apps:=.config/spirit/apps}"
+
+spirit_start() {
+	echo "Starting Spirit..."
+
+	for home in "$spirit_home"/*
+	do
+		user=$(basename "$home")
+		apps="${home}/${spirit_apps}"
+
+		[ -d "$apps" ] || break
+
+		for app_home in "$apps"/*
+		do
+			[ -d "$(realpath $app_home)" ] || break
+
+			echo "\t $(basename "$app_home")"
+			/usr/bin/su -m "$user" -c "cd ${app_home} && spirit start"
+		done
+	done
+}
+
+run_rc_command "$1"
+
+# vim: set nolist:
