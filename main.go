@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/chrismytton/procfile"
 	"github.com/direnv/go-dotenv"
+	_ "golang.org/x/xerrors"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -39,11 +40,18 @@ func init() {
 func main() {
 	flag.Parse()
 
-	parseProcfile()
-	parseEnv()
+	if err := parseProcfile(); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+
+	if err := parseEnv(); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
 
 	if err := setEnv(); err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to set environment: %v\n", err)
+		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 
@@ -53,13 +61,13 @@ func main() {
 
 		if name != "" {
 			if err := lookupProcess(name).start(); err != nil {
-				fmt.Fprintf(os.Stderr, "Unable to stop process %s: %s\n", name, err)
+				fmt.Fprintln(os.Stderr, err)
 				os.Exit(1)
 			}
 		} else {
 			for _, p := range processes {
 				if err := p.start(); err != nil {
-					fmt.Fprintf(os.Stderr, "Unable to start process %s: %s\n", p.Name, err)
+					fmt.Fprintln(os.Stderr, err)
 					os.Exit(1)
 				}
 			}
@@ -70,13 +78,13 @@ func main() {
 
 		if name != "" {
 			if err := lookupProcess(name).stop(); err != nil {
-				fmt.Fprintf(os.Stderr, "Unable to stop process %s: %s\n", name, err)
+				fmt.Fprintln(os.Stderr, err)
 				os.Exit(1)
 			}
 		} else {
 			for _, p := range processes {
 				if err := p.stop(); err != nil {
-					fmt.Fprintf(os.Stderr, "Unable to stop process %s: %s\n", p.Name, err)
+					fmt.Fprintln(os.Stderr, err)
 					os.Exit(1)
 				}
 			}
@@ -87,13 +95,13 @@ func main() {
 
 		if name != "" {
 			if err := lookupProcess(name).restart(); err != nil {
-				fmt.Fprintf(os.Stderr, "Unable to restart process %s: %s\n", name, err)
+				fmt.Fprintln(os.Stderr, err)
 				os.Exit(1)
 			}
 		} else {
 			for _, p := range processes {
 				if err := p.restart(); err != nil {
-					fmt.Fprintf(os.Stderr, "Unable to restart process %s: %s\n", p.Name, err)
+					fmt.Fprintln(os.Stderr, err)
 					os.Exit(1)
 				}
 			}
@@ -102,28 +110,31 @@ func main() {
 	case "log":
 		name := flag.Arg(1)
 		if name == "" {
-			quit(usage, 1)
+			fmt.Fprintln(os.Stderr, usage)
+			os.Exit(1)
 		}
 
 		if err := lookupProcess(name).viewLog(); err != nil {
-			fmt.Fprintf(os.Stderr, "Unable to view log of %s: %s\n", name, err)
+			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
 
 	case "tail":
 		name := flag.Arg(1)
 		if name == "" {
-			quit(usage, 1)
+			fmt.Fprintln(os.Stderr, usage)
+			os.Exit(1)
 		}
 
 		if err := lookupProcess(name).tailLog(); err != nil {
-			fmt.Fprintf(os.Stderr, "Unable to tail log of %s: %s\n", name, err)
+			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
 
 	case "run":
 		if flag.Arg(1) == "" {
-			quit(usage, 1)
+			fmt.Fprintln(os.Stderr, usage)
+			os.Exit(1)
 		}
 
 		cmd := exec.Command(flag.Arg(1), flag.Args()[2:]...)
@@ -132,7 +143,7 @@ func main() {
 		cmd.Stderr = os.Stderr
 
 		if err := cmd.Run(); err != nil {
-			fmt.Fprintf(os.Stderr, "Unable to run command: %s\n", err)
+			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
 
@@ -142,65 +153,64 @@ func main() {
 		}
 
 	default:
-		quit(usage, 1)
+		fmt.Fprintln(os.Stderr, usage)
+		os.Exit(1)
 	}
-}
-
-func quit(message string, code int) {
-	fmt.Println(message)
-	os.Exit(code)
 }
 
 func setEnv() error {
 	for key, value := range env {
 		if err := os.Setenv(key, value); err != nil {
-			return err
+			return fmt.Errorf("Error setting environment: %w", err)
 		}
 	}
 
 	return nil
 }
 
-func parseProcfile() {
+func parseProcfile() error {
 	if _, err := os.Stat("Procfile"); os.IsNotExist(err) {
-		quit("Unable to find Procfile", 1)
+		return fmt.Errorf("Procfile doesn't exist")
 	}
 
 	data, err := ioutil.ReadFile("Procfile")
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("Unable to read Procfile: %w", err)
 	}
 
 	for name, process := range procfile.Parse(string(data)) {
 		processes[name] = NewProcess(name, process.Command, process.Arguments)
 	}
+
+	return nil
 }
 
-func parseEnv() {
+func parseEnv() error {
 	var err error
 
 	if _, err := os.Stat(".env"); os.IsNotExist(err) {
-		return
+		return nil
 	}
 
 	data, err := ioutil.ReadFile(".env")
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("Unable to read .env: %w", err)
 	}
 
 	env, err = dotenv.Parse(string(data))
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("Error parsing .env: %w", err)
 	}
+
+	return nil
 }
 
 func lookupProcess(name string) *Process {
-	if p, ok := processes[name]; ok {
-		return p
+	p, ok := processes[name]
+	if !ok {
+		fmt.Fprintf(os.Stderr, "Unable to process %s\n", name)
+		os.Exit(1)
 	}
 
-	quit("Unable to find process "+name, 1)
-
-	// Never reached. Appease the compiler.
-	return nil
+	return p
 }
