@@ -206,13 +206,11 @@ func parseEnv() error {
 }
 
 func lookupProcess(name string) *Process {
-	if p, ok := processes[name]; ok {
-		return p
+	p, ok := processes[name]
+	if !ok {
+		fmt.Fprintf(os.Stderr, "Unable to process %s\n", name)
+		os.Exit(1)
 	}
 
-	fmt.Fprintf(os.Stderr, "Unable to process %s\n", name)
-	os.Exit(1)
-
-	// Never reached. Appease the compiler.
-	return nil
+	return p
 }
