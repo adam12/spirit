@@ -13,7 +13,7 @@ import (
 )
 
 type Process struct {
-	name          string
+	Name          string
 	command       string
 	arguments     []string
 	pidFile       string
@@ -31,7 +31,7 @@ func (p *Process) start() error {
 	cmdLine = append(cmdLine, p.arguments...)
 
 	args := []string{
-		"-t", p.name,
+		"-t", p.Name,
 		"-r",
 		"-o", p.logFile,
 		"-p", p.pidFile,
@@ -185,7 +185,7 @@ func NewProcess(name, command string, arguments []string) *Process {
 	}
 
 	return &Process{
-		name:          name,
+		Name:          name,
 		command:       command,
 		arguments:     arguments,
 		pidFile:       filepath.Join(cwd, "tmp", "pids", name+".pid"),

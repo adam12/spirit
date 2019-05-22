@@ -43,7 +43,8 @@ func main() {
 	parseEnv()
 
 	if err := setEnv(); err != nil {
-		panic(err)
+		fmt.Fprintf(os.Stderr, "Unable to set environment: %v\n", err)
+		os.Exit(1)
 	}
 
 	switch flag.Arg(0) {
@@ -52,12 +53,14 @@ func main() {
 
 		if name != "" {
 			if err := lookupProcess(name).start(); err != nil {
-				panic(err)
+				fmt.Fprintf(os.Stderr, "Unable to stop process %s: %s\n", name, err)
+				os.Exit(1)
 			}
 		} else {
 			for _, p := range processes {
 				if err := p.start(); err != nil {
-					panic(err)
+					fmt.Fprintf(os.Stderr, "Unable to start process %s: %s\n", p.Name, err)
+					os.Exit(1)
 				}
 			}
 		}
@@ -67,12 +70,14 @@ func main() {
 
 		if name != "" {
 			if err := lookupProcess(name).stop(); err != nil {
-				panic(err)
+				fmt.Fprintf(os.Stderr, "Unable to stop process %s: %s\n", name, err)
+				os.Exit(1)
 			}
 		} else {
 			for _, p := range processes {
 				if err := p.stop(); err != nil {
-					panic(err)
+					fmt.Fprintf(os.Stderr, "Unable to stop process %s: %s\n", p.Name, err)
+					os.Exit(1)
 				}
 			}
 		}
@@ -82,12 +87,14 @@ func main() {
 
 		if name != "" {
 			if err := lookupProcess(name).restart(); err != nil {
-				panic(err)
+				fmt.Fprintf(os.Stderr, "Unable to restart process %s: %s\n", name, err)
+				os.Exit(1)
 			}
 		} else {
 			for _, p := range processes {
 				if err := p.restart(); err != nil {
-					panic(err)
+					fmt.Fprintf(os.Stderr, "Unable to restart process %s: %s\n", p.Name, err)
+					os.Exit(1)
 				}
 			}
 		}
@@ -99,7 +106,7 @@ func main() {
 		}
 
 		if err := lookupProcess(name).viewLog(); err != nil {
-			fmt.Print(err)
+			fmt.Fprintf(os.Stderr, "Unable to view log of %s: %s\n", name, err)
 			os.Exit(1)
 		}
 
@@ -110,7 +117,7 @@ func main() {
 		}
 
 		if err := lookupProcess(name).tailLog(); err != nil {
-			fmt.Print(err)
+			fmt.Fprintf(os.Stderr, "Unable to tail log of %s: %s\n", name, err)
 			os.Exit(1)
 		}
 
@@ -125,7 +132,7 @@ func main() {
 		cmd.Stderr = os.Stderr
 
 		if err := cmd.Run(); err != nil {
-			fmt.Print(err)
+			fmt.Fprintf(os.Stderr, "Unable to run command: %s\n", err)
 			os.Exit(1)
 		}
 
